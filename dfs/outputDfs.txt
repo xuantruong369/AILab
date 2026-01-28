@@ -1,0 +1,10 @@
+Phat trien TT                  | Trang thai ke                  | Danh sach L
+------------------------------------------------------------------------------------------------
+                               |                                | A
+A                              | B,C,D                          | B,C,D
+D                              | F,G                            | B,C,F,G
+G                              | H                              | B,C,F,H
+H                              | TTKT-DUNG                      | 
+
+Duong di:
+A -> D -> G -> H
