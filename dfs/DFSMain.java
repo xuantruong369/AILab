@@ -5,7 +5,7 @@ import utils.OutputWriter;
 
 public class DFSMain {
     public static void main(String[] args) {
-        InputReader in = new InputReader("dfs/input.txt");
+        InputReader in = new InputReader("dfs/inputDfs.txt");
         OutputWriter out = new OutputWriter("dfs/outputDfs.txt");
 
         DFS dfs = new DFS
