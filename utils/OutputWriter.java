@@ -77,6 +77,47 @@ public class OutputWriter {
         writeLine(sb.toString());
     }
 
+    public void writeTable(Table table) {
+    int rows = table.getRowCount();
+    int cols = table.getColCount();
+
+    int[] colWidths = table.getMaxColWidths(3);
+
+        // ===== 1. IN HEADER (row 0) =====
+        StringBuilder header = new StringBuilder();
+        for (int c = 0; c < cols; c++) {
+            String cell = table.get(0, c);
+            if (cell == null) cell = "";
+
+            header.append(String.format("%-" + colWidths[c] + "s", cell));
+            if (c < cols - 1) header.append(" | ");
+        }
+        writeLine(header.toString());
+
+        // ===== 2. IN DÒNG GẠCH =====
+        StringBuilder sep = new StringBuilder();
+        for (int c = 0; c < cols; c++) {
+            sep.append("-".repeat(colWidths[c]));
+            if (c < cols - 1) sep.append("-+-");
+        }
+        writeLine(sep.toString());
+
+        // ===== 3. IN DATA (từ row 1) =====
+        for (int r = 1; r < rows; r++) {
+            StringBuilder line = new StringBuilder();
+            for (int c = 0; c < cols; c++) {
+                String cell = table.get(r, c);
+                if (cell == null) cell = "";
+
+                line.append(String.format("%-" + colWidths[c] + "s", cell));
+                if (c < cols - 1) line.append(" | ");
+            }
+            writeLine(line.toString());
+        }
+    }
+
+
+
     public void close() {
         try {
             bw.close();

@@ -11,10 +11,10 @@ public class HillClimbingMain {
             in.getMatrix(), 
             in.getNodes(), 
             in.getStart(), 
-            in.getGoal(), 
-            out
+            in.getGoal()
         );
         hill.hasPath();
+        out.writeTable(hill.buildTable());
         out.writePath(hill.getPath());
         out.close();
     }

@@ -1,7 +1,7 @@
 package hillclimbing;
 import java.util.*;
 import utils.Node;
-import utils.OutputWriter;
+import utils.Table;
 
 public class HillClimbing {
 
@@ -11,21 +11,20 @@ public class HillClimbing {
     private Map<Integer, Integer> parent;
     private int start;
     private int goal;
-    private OutputWriter out;
     private PriorityQueue<Integer> maxList;
     private Stack<Integer> openList;
+    private Table tableData;
 
     public HillClimbing(int[][] matrix,
                         List<Node> nodes,
                         int start,
-                        int goal,
-                        OutputWriter out) {
+                        int goal
+    ) {
 
         this.matrix = matrix;
         this.nodes = nodes;
         this.start = start;
         this.goal = goal;
-        this.out = out;
 
         visited = new boolean[nodes.size()];
         parent = new HashMap<>();
@@ -36,28 +35,53 @@ public class HillClimbing {
             ).reversed()
         );
         openList = new Stack<>();
+        this.tableData = new Table(3);
     }
 
     public boolean hasPath() {
-        out.writeHeader();
-        out.writeRow(nodes.get(start));
+        //
+        tableData.writeAddCell("Phat trien TT");
+        tableData.nextColumn();
+
+        tableData.writeAddCell("Trang thai ke");
+        tableData.nextColumn();
+
+        tableData.writeAddCell("Danh sach L");
+        tableData.nextRow();
+        //
+        
         
         openList.push(start);
+
+        //
+        tableData.writeAddCell("");
+        tableData.nextColumn();
+
+        tableData.writeAddCell("");
+        tableData.nextColumn();
+
+        tableData.writeAddCell(nodes.get(start).toString());
+        tableData.nextRow();
+        //
         
 
         while (!openList.isEmpty()) {
             int u = openList.pop();
             visited[u] = true;
 
-            List<Node> neighbors = new ArrayList<>();
+            //
+            tableData.writeAddCell(nodes.get(u).toString());
+            tableData.nextColumn();
+            //
+
 
             // duyệt các đỉnh kề
             for (int v = 0; v < matrix.length; v++) {
                 if (matrix[u][v] == 1 && !visited[v]) {
-                    neighbors.add(nodes.get(v));
                     parent.put(v, u);
-                    //
                     maxList.add(v);
+                    //
+                    tableData.writeAddCell(nodes.get(v).toString());
                     //
                 }
             }
@@ -67,18 +91,28 @@ public class HillClimbing {
             }
             //
 
-            // danh sách L
-            List<Node> L = new ArrayList<>();
-            for (int x : openList)
-                L.add(nodes.get(x));
-
             if (u == goal) {
-                L.clear();
-                out.writeRow(nodes.get(u),List.of(new Node("TTKT-DUNG", -1)), L);
+                //
+                tableData.setCurrentCell("TTKT-DUNG");
+                tableData.nextColumn();
+
+                tableData.writeAddCell("");
+                //
                 return true;
             }
-            Collections.reverse(L);
-            out.writeRow(nodes.get(u), neighbors, L);
+           
+            //
+            tableData.nextColumn();
+            //
+            List<Integer> list = new ArrayList<>(openList);
+            //list.sort(Comparator.comparingInt(i -> nodes.get(i).getWeight()));
+            Collections.reverse(list);
+
+            for (Integer value : list) {
+                tableData.writeAddCell(nodes.get(value).toString());
+            }
+            tableData.nextRow();
+            //
         }
 
         return false;
@@ -96,5 +130,9 @@ public class HillClimbing {
         }
         Collections.reverse(path);
         return path;
+    }
+
+    public Table buildTable() {
+        return tableData;
     }
 }

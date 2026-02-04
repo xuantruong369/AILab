@@ -1,7 +1,7 @@
 package bfs;
 import java.util.*;
 import utils.Node;
-import utils.OutputWriter;
+import utils.Table;
 
 public class BFS {
 
@@ -11,10 +11,10 @@ public class BFS {
     private Map<Integer, Integer> parent; // truy vết
     private int start;
     private int goal;
-    private OutputWriter out;
     private Queue<Integer> openList;
+    private Table tableData;
 
-    public BFS(int[][] matrix, List<Node> nodes, int start, int goal, OutputWriter out) {
+    public BFS(int[][] matrix, List<Node> nodes, int start, int goal) {
         this.matrix = matrix;
         this.nodes = nodes;
         this.start = start;
@@ -22,46 +22,72 @@ public class BFS {
         this.visited = new boolean[nodes.size()];
         this.parent = new HashMap<>();
         this.openList = new LinkedList<>();
-        this.out = out;
+
+        this.tableData = new Table(3);
     }
 
     public boolean hasPath() {
-        out.writeHeader();
-        out.writeRow(nodes.get(start));
+        //
+        tableData.writeAddCell("Phat trien TT");
+        tableData.nextColumn();
+
+        tableData.writeAddCell("Trang thai ke");
+        tableData.nextColumn();
+
+        tableData.writeAddCell("Danh sach L");
+        tableData.nextRow();
+        //
 
         openList.add(start);
+
+        //
+        tableData.writeAddCell("");
+        tableData.nextColumn();
+
+        tableData.writeAddCell("");
+        tableData.nextColumn();
+
+        tableData.writeAddCell(nodes.get(start).toString());
+        tableData.nextRow();
+        //
         
         while (!openList.isEmpty()) {
             int u = openList.poll();
 
+            //
+            tableData.writeAddCell(nodes.get(u).toString());
+            tableData.nextColumn();
+            //
+
             if (visited[u]) continue;
             visited[u] = true;
 
-            // Lấy danh sách kề
-            List<Node> neighbors = new ArrayList<>();
+     
 
             for (int i = 0; i < matrix.length; i++) {
                 if (matrix[u][i] == 1 && !visited[i]) {
-                    neighbors.add(nodes.get(i));
                     parent.put(i, u);
                     openList.add(i);
+                    //
+                    tableData.writeAddCell(nodes.get(i).toString());
+                    //
                 }
             }
 
-            // Lấy danh sách L (stack)
-            List<Node> L = new ArrayList<>();
-            for (int x : openList)
-                L.add(nodes.get(x));
 
             // Ghi output
             if (u == goal) {
                 //
-                L.clear();
-                out.writeRow(nodes.get(u), List.of(new Node("TTKT-DUNG", -1)), L);
+                tableData.setCurrentCell("TTKT-DUNG");
+                tableData.nextColumn();
+
+                tableData.writeAddCell("");
+                //
                 return true;
             }
 
-            out.writeRow(nodes.get(u), neighbors, L);
+         
+
         }
 
         return false;
@@ -79,5 +105,9 @@ public class BFS {
         }
         Collections.reverse(path);
         return path;
+    }
+
+    public Table buildTable() {
+        return tableData;
     }
 }

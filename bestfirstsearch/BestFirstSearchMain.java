@@ -13,11 +13,11 @@ public class BestFirstSearchMain {
             in.getMatrix(), 
             in.getNodes(),
             in.getStart(),
-            in.getGoal(),
-            out
+            in.getGoal()
         );
 
         best.hasPath();
+        out.writeTable(best.buildTable());
         out.writePath(best.getPath());
         out.close();
     }

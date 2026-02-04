@@ -13,10 +13,10 @@ public class DFSMain {
             in.getMatrix(),
             in.getNodes(), 
             in.getStart(), 
-            in.getGoal(), 
-            out
+            in.getGoal()
         );
         dfs.hasPath();
+        out.writeTable(dfs.buildTable());
         out.writePath(dfs.getPath());
         out.close();
     }

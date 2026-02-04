@@ -1,12 +1,12 @@
-Phat trien TT                  | Trang thai ke                  | Danh sach L
-------------------------------------------------------------------------------------------------
-                               |                                | A
-A                              | B,D,C                          | B,D,C
-B                              | I,G                            | D,C,I,G
-D                              | C,F                            | C,I,G,C,F
-C                              | F,E                            | I,G,C,F,F,E
-I                              | G                              | G,C,F,F,E,G
-G                              | TTKT-DUNG                      | 
+Phat trien TT | Trang thai ke | Danh sach L
+--------------+---------------+------------
+              |               | A          
+A             | B,D,C         | B,D,C      
+B             | I,G           | D,C,I,G    
+D             | C,F           | C,I,G,C,F  
+C             | F,E           | I,G,C,F,F,E
+I             | G             | G,C,F,F,E,G
+G             | TTKT-DUNG     |            
 
 Duong di:
 A -> B -> I -> G

@@ -1,4 +1,5 @@
-package bestfirstsearch;
+package astar;
+
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,28 +9,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import utils.Node;
-import utils.Table;
+import utils.OutputWriter;
 
-public class BestFirstSearch {
+public class Astar {
     private int[][] matrix;
     private List<Node> nodes;
     private boolean[] visited;
     private Map<Integer, Integer> parent;
     private int start;
     private int goal;
+    private OutputWriter out;
     private PriorityQueue<Integer> openList;//openList
-    private Table tableData;
 
-    public BestFirstSearch(int[][] matrix,
+    public Astar(int[][] matrix,
                         List<Node> nodes,
                         int start,
-                        int goal
-    ) {
+                        int goal,
+                        OutputWriter out) {
 
         this.matrix = matrix;
         this.nodes = nodes;
         this.start = start;
         this.goal = goal;
+        this.out = out;
 
         visited = new boolean[nodes.size()];
         parent = new HashMap<>();
@@ -39,80 +41,63 @@ public class BestFirstSearch {
                 (Integer i) -> nodes.get(i).getWeight()
             )
         );
-
-        this.tableData = new Table(3);
     }
 
     public boolean hasPath() {
-        //
-        tableData.writeAddCell("Phat trien TT");
-        tableData.nextColumn();
-
-        tableData.writeAddCell("Trang thai ke");
-        tableData.nextColumn();
-
-        tableData.writeAddCell("Danh sach L");
-        tableData.nextRow();
-        //
+        out.writeHeader();
+        out.writeRow(nodes.get(start));
         
         openList.add(start);
         
-        //
-        tableData.writeAddCell("");
-        tableData.nextColumn();
-
-        tableData.writeAddCell("");
-        tableData.nextColumn();
-
-        tableData.writeAddCell(nodes.get(start).toString());
-        tableData.nextRow();
-        //
 
         while (!openList.isEmpty()) {
             int u = openList.poll();
             visited[u] = true;
 
-            //
-            tableData.writeAddCell(nodes.get(u).toString());
-            tableData.nextColumn();
-            //
-
+            List<Node> neighbors = new ArrayList<>();
 
             // duyệt các đỉnh kề
             for (int v = 0; v < matrix.length; v++) {
                 if (matrix[u][v] == 1 && !visited[v]) {
+                    neighbors.add(nodes.get(v));
                     parent.put(v, u);
-                    openList.add(v);
                     //
-                    tableData.writeAddCell(nodes.get(v).toString());
+                    openList.add(v);
                     //
                 }
             }
 
-            if (u == goal) {
-                //
-                tableData.setCurrentCell("TTKT-DUNG");
-                tableData.nextColumn();
+            // danh sách L
+            List<Node> L = new ArrayList<>();
+            for (int x : openList)
+                L.add(nodes.get(x));
 
-                tableData.writeAddCell("");
-                //
+            if (u == goal) {
+                L.clear();
+                out.writeRow(nodes.get(u),List.of(new Node("TTKT-DUNG", -1)), L);
                 return true;
             }
-
-            //
-            tableData.nextColumn();
-            //
-            List<Integer> list = new ArrayList<>(openList);
-            list.sort(Comparator.comparingInt(i -> nodes.get(i).getWeight()));
-
-            for (Integer value : list) {
-                tableData.writeAddCell(nodes.get(value).toString());
-            }
-            tableData.nextRow();
-            //
+            L.sort(null);
+            out.writeRow(nodes.get(u), neighbors, L);
         }
 
         return false;
+    }
+
+    private int k(int u, int v) {
+        return matrix[u][v];
+    }
+
+    private int h(int v) {
+        return nodes.get(v).getWeight();
+    }
+
+    private int g(int v) {
+        return 0;
+    }
+
+    private int f(int v) {
+        return g(v) + h(v);
     }
 
     public List<Node> getPath() {
@@ -127,9 +112,5 @@ public class BestFirstSearch {
         }
         Collections.reverse(path);
         return path;
-    }
-
-    public Table buildTable() {
-        return tableData;
     }
 }

@@ -13,10 +13,10 @@ public class BFSMain {
             in.getMatrix(),
             in.getNodes(),
             in.getStart(),
-            in.getGoal(),
-            out
+            in.getGoal()
         );
         bfs.hasPath();
+        out.writeTable(bfs.buildTable());
         out.writePath(bfs.getPath());
         out.close();
     }
