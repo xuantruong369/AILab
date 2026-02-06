@@ -55,6 +55,18 @@ public class Table {
         reset();
     }
 
+    public void next(int row, int column) {
+        if (row < 0 || column < 0 || column >= cols) {
+            throw new IllegalArgumentException("Invalid row or column index");
+        }
+
+        this.rowIndex = row;
+        this.colIndex = column;
+        ensureRowExists();
+        reset();
+    }
+
+
     /* ================== CORE ================== */
 
     private void commitCell() {
@@ -102,6 +114,41 @@ public class Table {
 
     public String get(int r, int c) {
         return rows.get(r)[c];
+    }
+
+    public int getCurrentRow() {
+        return rowIndex;
+    }
+
+    public int getCurrentColumn() {
+        return colIndex;
+    }
+
+    public void setCurrentRow(int row) {
+        if (row < 0) {
+            throw new IllegalArgumentException("Row index must be >= 0");
+        }
+        this.rowIndex = row;
+        ensureRowExists();
+        reset();
+    }
+
+    public void setCurrentColumn(int column) {
+        if (column < 0 || column >= cols) {
+            throw new IllegalArgumentException("Column index out of range");
+        }
+        this.colIndex = column;
+        reset();
+    }
+
+    public void setIndex(int row, int column) {
+        if (row < 0 || column < 0 || column >= cols) {
+            throw new IllegalArgumentException("Invalid row or column index");
+        }
+        this.rowIndex = row;
+        this.colIndex = column;
+        ensureRowExists();
+        reset();
     }
 
     /* ================== TIỆN ÍCH ================== */

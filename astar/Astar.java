@@ -1,6 +1,5 @@
 package astar;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -9,7 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import utils.Node;
-import utils.OutputWriter;
+import utils.Pair;
+import utils.Table;
 
 public class Astar {
     private int[][] matrix;
@@ -18,67 +18,138 @@ public class Astar {
     private Map<Integer, Integer> parent;
     private int start;
     private int goal;
-    private OutputWriter out;
-    private PriorityQueue<Integer> openList;//openList
+    private PriorityQueue<Pair> openList;//openList
+    private Map<Pair, Integer> gCost;
+    private Table tableData;
+    private int pathCost;
 
     public Astar(int[][] matrix,
                         List<Node> nodes,
                         int start,
-                        int goal,
-                        OutputWriter out) {
+                        int goal
+    ) {
 
         this.matrix = matrix;
         this.nodes = nodes;
         this.start = start;
         this.goal = goal;
-        this.out = out;
-
         visited = new boolean[nodes.size()];
         parent = new HashMap<>();
-
         openList = new PriorityQueue<>(
-            Comparator.comparingInt(
-                (Integer i) -> nodes.get(i).getWeight()
-            )
+            Comparator.comparingInt(Pair::getSecond)
         );
+        gCost = new HashMap<>();
+
+        this.tableData = new Table(7);
     }
 
     public boolean hasPath() {
-        out.writeHeader();
-        out.writeRow(nodes.get(start));
-        
-        openList.add(start);
-        
+        int indexRow = 1;
+        int count;
+        //title table
+        tableData.writeAddCell("TT");
+        tableData.nextColumn();
 
+        tableData.writeAddCell("TTK");
+        tableData.nextColumn();
+
+        tableData.writeAddCell("k(u,v)");
+        tableData.nextColumn();
+
+        tableData.writeAddCell("h(v)");
+        tableData.nextColumn();
+
+        tableData.writeAddCell("g(v)");
+        tableData.nextColumn();
+
+        tableData.writeAddCell("f(v)");
+        tableData.nextColumn();
+
+        tableData.writeAddCell("Danh sach L");
+        tableData.nextColumn();
+
+        tableData.nextRow();
+
+        //
+        
+        Pair pStart = new Pair(start, 0);
+        openList.add(pStart);
+        gCost.put(pStart, 0);
+        
         while (!openList.isEmpty()) {
-            int u = openList.poll();
-            visited[u] = true;
+            Pair u = openList.poll();
+            visited[u.getFirst()] = true;
 
-            List<Node> neighbors = new ArrayList<>();
+            //
+            count = 0;
+            //
 
             // duyệt các đỉnh kề
             for (int v = 0; v < matrix.length; v++) {
-                if (matrix[u][v] == 1 && !visited[v]) {
-                    neighbors.add(nodes.get(v));
-                    parent.put(v, u);
+                if (matrix[u.getFirst()][v] != -1 /*&& !visited[v]*/) {
                     //
-                    openList.add(v);
+                    // tinh g(v) = g(u) + k(u, v)
+                    int k = k(u.getFirst(), v);
+                    int h = h(v);
+                    int g = gCost.get(u) + k;
+                    int f = g + h;
+                    // tinh f(v) = g(v) + h(v)
+                    // Map(f(v))
+                    Pair pv = new Pair(v, f);
+                    parent.put(v, u.getFirst());
+                    openList.add(pv);
+                    gCost.put(pv, g);
+                    //
+                    tableData.writeAddCell("");
+                    tableData.nextColumn();
+
+                    tableData.writeAddCell(nodes.get(v).getName());
+                    tableData.nextColumn();
+
+                    tableData.writeAddCell(String.valueOf(k));
+                    tableData.nextColumn();
+
+                    tableData.writeAddCell(String.valueOf(h));
+                    tableData.nextColumn();
+
+                    tableData.writeAddCell(String.valueOf(g));
+                    tableData.nextColumn();
+
+                    tableData.writeAddCell(String.valueOf(f));
+                    tableData.nextColumn();
+
+                    tableData.writeAddCell("");
+                    tableData.nextRow();
+                    count++;
                     //
                 }
             }
 
-            // danh sách L
-            List<Node> L = new ArrayList<>();
-            for (int x : openList)
-                L.add(nodes.get(x));
+            tableData.next(indexRow, 0);
+            tableData.writeAddCell(nodes.get(u.getFirst()).getName());
 
-            if (u == goal) {
-                L.clear();
-                out.writeRow(nodes.get(u),List.of(new Node("TTKT-DUNG", -1)), L);
+            if (u.getFirst() == goal) {
+                pathCost = gCost.get(u);
+                tableData.nextColumn();
+                tableData.writeAddCell("TTKT-DUNG");
                 return true;
             }
-            L.sort(null);
-            out.writeRow(nodes.get(u), neighbors, L);
+
+            tableData.next(indexRow, 6);
+            //
+            List<Pair> list = new ArrayList<>(openList);
+            list.sort(Comparator.comparingInt(Pair::getSecond));
+
+            for (Pair p : list) {
+                tableData.writeAddCell(nodes.get(p.getFirst()).getName() + String.valueOf(p.getSecond()));
+            }
+
+            indexRow += count;
+            tableData.setIndex(indexRow, 0);
+
+            //
+
+         
         }
 
         return false;
@@ -97,7 +168,7 @@ public class Astar {
     }
 
     private int f(int v) {
-        return g(v) + h(v);
+        return h(v) + g(v);
     }
 
     public List<Node> getPath() {
@@ -112,5 +183,13 @@ public class Astar {
         }
         Collections.reverse(path);
         return path;
+    }
+
+    public int getPathCost() {
+        return pathCost;
+    }
+
+    public Table buildTable() {
+        return tableData;
     }
 }
