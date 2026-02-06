@@ -82,6 +82,9 @@ public class OutputWriter {
 
     public void writePathCost(int pathCost) {
         //
+        if (pathCost == -1) return;
+        writeLine("Do dai: " + String.valueOf(pathCost));
+
         //
     }
 

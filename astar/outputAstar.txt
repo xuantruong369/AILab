@@ -15,3 +15,4 @@ B   | TTKT-DUNG |        |      |      |      |
 
 Duong di:
 A -> D -> E -> I -> B
+Do dai: 19

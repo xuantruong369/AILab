@@ -19,6 +19,7 @@ public class AstarMain {
         astar.hasPath();
         out.writeTable(astar.buildTable());
         out.writePath(astar.getPath());
+        out.writePathCost(astar.getPathCost());
         out.close();
     }
     

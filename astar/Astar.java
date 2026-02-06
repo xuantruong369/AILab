@@ -39,7 +39,7 @@ public class Astar {
             Comparator.comparingInt(Pair::getSecond)
         );
         gCost = new HashMap<>();
-
+        pathCost = -1;
         this.tableData = new Table(7);
     }
 
@@ -163,13 +163,13 @@ public class Astar {
         return nodes.get(v).getWeight();
     }
 
-    private int g(int v) {
-        return 0;
-    }
+    // private int g(int v) {
+    //     return 0;
+    // }
 
-    private int f(int v) {
-        return h(v) + g(v);
-    }
+    // private int f(int v) {
+    //     return h(v) + g(v);
+    // }
 
     public List<Node> getPath() {
         List<Node> path = new ArrayList<>();
