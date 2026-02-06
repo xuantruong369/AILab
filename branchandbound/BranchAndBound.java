@@ -16,7 +16,7 @@ public class BranchAndBound {
     private int[][] matrix;
     private List<Node> nodes;
     private boolean[] visited;
-    private Map<Integer, Integer> parent;
+    private Map<Pair, Pair> parent;
     private int start;
     private int goal;
     private PriorityQueue<Pair> maxList;//openList
@@ -85,7 +85,6 @@ public class BranchAndBound {
         while (!openList.isEmpty()) {
             Pair u = openList.pop();
             visited[u.getFirst()] = true;
-
             //
             count = 0;
             //
@@ -102,7 +101,7 @@ public class BranchAndBound {
                     // tinh f(v) = g(v) + h(v)
                     // Map(f(v))
                     Pair pv = new Pair(v, f);
-                    parent.put(v, u.getFirst());
+                    parent.put(pv, u);
                     //openList.push(pv);
                     maxList.add(pv);
                     gCost.put(pv, g);
@@ -146,10 +145,14 @@ public class BranchAndBound {
 
             tableData.next(indexRow, 0);
             tableData.writeAddCell(nodes.get(u.getFirst()).getName());
-
             if (u.getFirst() == goal) {
                 if (gCost.get(u) <= pathCost) {
                     pathCost = gCost.get(u);
+                    //
+                    tableData.nextColumn();
+                    tableData.writeAddCell("Do dai: " + String.valueOf(pathCost));
+                    //
+                    count = 1;
                 }
                 else {
                     tableData.nextColumn();
@@ -174,8 +177,6 @@ public class BranchAndBound {
             tableData.setIndex(indexRow, 0);
 
             //
-
-         
         }
 
         return false;
@@ -201,11 +202,13 @@ public class BranchAndBound {
         List<Node> path = new ArrayList<>();
         if (!visited[goal]) return path;
 
-        int cur = goal;
+        //Pair cur = goal;
+        Pair pCur = new Pair(goal, pathCost);
         while (true) {
-            path.add(nodes.get(cur));
-            if (cur == start) break;
-            cur = parent.get(cur);
+            path.add(nodes.get(pCur.getFirst()));
+            if (pCur.getFirst() == start) break;
+            pCur = parent.get(pCur);
+            if (pCur == null) break;
         }
         Collections.reverse(path);
         return path;
